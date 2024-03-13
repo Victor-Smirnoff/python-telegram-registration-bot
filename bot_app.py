@@ -19,12 +19,13 @@ dp = Dispatcher()
 @dp.message(CommandStart())
 async def start_cmd(message: types.Message):
     user_id = message.from_user.id
-    url_addres = "http://127.0.0.1:8000/users/register/"
+    url_addres_for_register = "http://127.0.0.1:8000/users/register/"
     registration_token = await generate_jwt_registration_token(
         user_id=user_id,
         jwt_secret_key=JWT_SECRET_KEY
     )
-    registration_link = url_addres + registration_token
+
+    registration_link = url_addres_for_register + registration_token
     await message.answer(
         f"Ссылка для регистрации: {registration_link}"
     )
