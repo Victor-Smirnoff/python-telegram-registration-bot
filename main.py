@@ -7,13 +7,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 bot = Bot(token=os.getenv("TOKEN"))
 dp = Dispatcher()
 
 
 @dp.message(CommandStart())
 async def start_cmd(message: types.Message):
-    await message.answer("Команда Старт")
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+    user_first_name = message.from_user.first_name
+    user_last_name = message.from_user.last_name
+    await message.answer(
+        f"Команда старт от пользователя “{user_first_name} {user_last_name}” "
+        f"с айди “{user_id}” и айди чата “{chat_id}”"
+    )
 
 
 async def main():
