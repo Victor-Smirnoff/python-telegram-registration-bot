@@ -31,7 +31,7 @@ async def get_register_page(jwt_token: str, request: Request):
 
 
 @app.post("/users/register/", response_class=HTMLResponse)
-async def post_register_page(user_id: str = Form(...), password: str = Form(...)):
+async def post_register_page(request: Request, user_id: str = Form(...), password: str = Form(...)):
     #  здесь должен быть блок кода, который проверяет айди пользователя в базе данных
     #  если пользователь не найден, то происходит запись в таблицу users
     #  если пользователь с таким айди уже существует, то перенаправление на страницу с ошибкой регистрации
@@ -40,7 +40,7 @@ async def post_register_page(user_id: str = Form(...), password: str = Form(...)
 
     user_data = {"user_id": user_id, "password": password}
 
-    return templates.TemplateResponse("register_done.html", user_data)
+    return templates.TemplateResponse("register_done.html", {"request": request, "user_data": user_data})
 
 
 if __name__ == "__main__":
