@@ -1,4 +1,4 @@
 .idea/
-ENV.py
+.ENV
 __pycache__/
 venv/
