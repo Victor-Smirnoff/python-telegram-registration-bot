@@ -1,6 +1,6 @@
 import uvicorn
 import os
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
@@ -28,6 +28,19 @@ async def get_register_page(jwt_token: str, request: Request):
     except ExpiredSignatureError:
         message = "Signature has expired"
         return templates.TemplateResponse("register_error.html", {"request": request, "message": message})
+
+
+@app.post("/users/register/", response_class=HTMLResponse)
+async def post_register_page(user_id: str = Form(...), password: str = Form(...)):
+    #  здесь должен быть блок кода, который проверяет айди пользователя в базе данных
+    #  если пользователь не найден, то происходит запись в таблицу users
+    #  если пользователь с таким айди уже существует, то перенаправление на страницу с ошибкой регистрации
+
+    #  здесь будет описан сценарий если с базой данных всё ок и запись прошла успешно
+
+    user_data = {"user_id": user_id, "password": password}
+
+    return templates.TemplateResponse("register_done.html", user_data)
 
 
 if __name__ == "__main__":
