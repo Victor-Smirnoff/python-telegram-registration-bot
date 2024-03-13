@@ -24,23 +24,35 @@ async def get_register_page(jwt_token: str, request: Request):
             jwt_token=jwt_token,
             jwt_secret_key=JWT_SECRET_KEY
         )
-        return templates.TemplateResponse("register.html", {"request": request, "payload": payload})
+        return templates.TemplateResponse(
+            name="register.html",
+            context={"request": request, "payload": payload, "jwt_token": jwt_token},
+            status_code=200
+        )
     except ExpiredSignatureError:
-        message = "Signature has expired"
-        return templates.TemplateResponse("register_error.html", {"request": request, "message": message})
+        error_message = f"Срок действия токена “{jwt_token}” истек"
+        return templates.TemplateResponse(
+            name="register_error.html",
+            context={"request": request, "error_message": error_message},
+            status_code=403
+        )
 
 
 @app.post("/users/register/", response_class=HTMLResponse)
-async def post_register_page(request: Request, user_id: str = Form(...), password: str = Form(...)):
+async def post_register_page(request: Request, registration_token: str = Form(...), password: str = Form(...)):
     #  здесь должен быть блок кода, который проверяет айди пользователя в базе данных
     #  если пользователь не найден, то происходит запись в таблицу users
     #  если пользователь с таким айди уже существует, то перенаправление на страницу с ошибкой регистрации
 
-    #  здесь будет описан сценарий если с базой данных всё ок и запись прошла успешно
+    #  здесь будет описан сценарий если с базой данных всё ок и запись прошла успешно и если пароль отправлен не пустой
 
-    user_data = {"user_id": user_id, "password": password}
+    token = {"registration_token": registration_token}
 
-    return templates.TemplateResponse("register_done.html", {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(
+        name="register_done.html",
+        context={"request": request, "token": token},
+        status_code=201
+    )
 
 
 if __name__ == "__main__":

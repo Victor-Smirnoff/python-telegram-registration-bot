@@ -5,13 +5,13 @@
   <title>Страница регистрации пользователя через telegram</title>
 </head>
 <body>
-<p align="center">Регистрации пользователя {{ payload.sub }} через telegram</p>
+<p align="center">Регистрации пользователя “{{ payload.sub }}” через telegram</p>
 <div align="center">
 <form action="/users/register/" method="post" enctype="application/x-www-form-urlencoded">
     <div>
-        <label class="p-text" for="password">Введите пароль:</label>
+        <label class="p-text" for="password">Пароль:</label>
         <input class="input-custom" type="text" id="password" name="password" placeholder="Введите пароль"><br>
-        <input type="hidden" name="user_id" value="{{ payload.sub }}">
+        <input type="hidden" name="registration_token" value="{{ jwt_token }}">
     </div>
     <div id="my-button">
         <button class="custom-button" type="submit" title="Нажмите чтобы зарегистрироваться">Зарегистрироваться</button>
