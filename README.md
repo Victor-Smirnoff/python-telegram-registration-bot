@@ -7,9 +7,9 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-333?style=for-the-badge&logo=FastAPI&logoColor=#009688)
 ![Asyncio](https://img.shields.io/badge/Asyncio-333?style=for-the-badge&logo=Asyncio)
 ![Uvicorn](https://img.shields.io/badge/Uvicorn-333?style=for-the-badge&logo=Uvicorn)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-333?style=for-the-badge&logo=PostgreSQL)
 
-
-## start/
+## /start
 
 Бот генерирует для пользователя уникальную ссылку для регистрации (токен для регистрации), действующую 1 минуту
 
@@ -23,7 +23,7 @@
 
 ## Обработка POST запроса
 
-Сервер получает данные от пользователя после ввода пароля и нажатия кнопки "Зарегистрироваться". Эта часть осталась не реализована. Нет валидации на пустое поле "password". А также нет проверки на наличие пользователя в базе данных.
+Сервер получает данные от пользователя после ввода пароля и нажатия кнопки "Зарегистрироваться". Происходит валидация токена. Валидация на пустое поле "password". А также проверка на наличие пользователя в базе данных.
 
 ## Регистрация на сайте
 
@@ -39,6 +39,8 @@
 
 Установить все зависимости из файла requirements.txt
 
+Установить СУБД PostgreSQL. Создать там новую БД DB_NAME=telegram_test и нового пользователя DB_USER=telegram_user_test.
+
 Создать файл .ENV и записать в него следующие переменные:
 
 HTTP_API_TELEGRAM_TOKEN - токен, полученный при регистрации нового телеграм-бота от главного бота BotFather
@@ -47,7 +49,14 @@ JWT_SECRET_KEY - строка текста, на основании которо
 
 URL_ADDRES_TO_REGISTER - url адрес, на который требуется отправить POST запрос с данными пользователя для регистрации
 
+Запустить файл insert_data_db.py для наполнения таблцы БД тестовыми данными.
+
 Запустить файл bot_run.bat
+
+Зайти в телеграм бот по ссылке:
+[Register_user_test_bot](https://t.me/Register_user_test_bot)
+
+Нажать на кнопку /start для получения ссылки для регистрации
 
 ## License
 Project Weather is licensed under the MIT license. (http://opensource.org/licenses/MIT)
