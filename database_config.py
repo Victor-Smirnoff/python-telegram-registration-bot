@@ -22,5 +22,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-print(settings.data_base_url)
