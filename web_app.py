@@ -1,9 +1,13 @@
 import uvicorn
 import os
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
+
+from crud_users import CRUDUser, crud_user
+from model import User
+from password_service import generate_hashed_password
 from token_service import decode_jwt_token
 from jwt.exceptions import ExpiredSignatureError
 
@@ -39,20 +43,49 @@ async def get_register_page(jwt_token: str, request: Request):
 
 
 @app.post("/users/register/", response_class=HTMLResponse)
-async def post_register_page(request: Request, registration_token: str = Form(...), password: str = Form(...)):
-    #  здесь должен быть блок кода, который проверяет айди пользователя в базе данных
-    #  если пользователь не найден, то происходит запись в таблицу users
-    #  если пользователь с таким айди уже существует, то перенаправление на страницу с ошибкой регистрации
+async def post_register_page(
+    request: Request,
+    registration_token: str = Form(...),
+    password: str = Form(...),
+    crud_user_obj: CRUDUser = Depends(crud_user)
+):
+    try:
+        payload = await decode_jwt_token(
+            jwt_token=registration_token,
+            jwt_secret_key=JWT_SECRET_KEY
+        )
 
-    #  здесь будет описан сценарий если с базой данных всё ок и запись прошла успешно и если пароль отправлен не пустой
+        user_id = payload["sub"]
 
-    token = {"registration_token": registration_token}
+        user_check_in_database = await crud_user_obj.find_user_by_telegram_user_id(telegram_user_id=user_id)
 
-    return templates.TemplateResponse(
-        name="register_done.html",
-        context={"request": request, "token": token},
-        status_code=201
-    )
+        if user_check_in_database is not None:
+            error_message = f"Пользователь с айди “{user_id}” уже был зарегистрирован"
+            return templates.TemplateResponse(
+                name="register_error.html",
+                context={"request": request, "error_message": error_message},
+                status_code=403
+            )
+        else:
+            hashed_password = await generate_hashed_password(password=password)
+            hashed_password_str = hashed_password.decode()
+            new_user = User(user_id=user_id, password=hashed_password_str)
+
+            token = {"registration_token": registration_token}
+
+            return templates.TemplateResponse(
+                name="register_done.html",
+                context={"request": request, "token": token, "new_user": new_user},
+                status_code=201
+            )
+
+    except ExpiredSignatureError:
+        error_message = f"Срок действия токена “{registration_token}” истек"
+        return templates.TemplateResponse(
+            name="register_error.html",
+            context={"request": request, "error_message": error_message},
+            status_code=403
+        )
 
 
 if __name__ == "__main__":

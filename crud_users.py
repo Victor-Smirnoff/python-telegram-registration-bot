@@ -1,6 +1,9 @@
+from fastapi import Depends
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, Result
+
+from database import db_helper
 from model import User
 
 
@@ -56,3 +59,7 @@ class CRUDUser:
                 return None
         except SQLAlchemyError:
             return None
+
+
+async def crud_user(session: AsyncSession = Depends(db_helper.session_dependency)):
+    return CRUDUser(session=session)
