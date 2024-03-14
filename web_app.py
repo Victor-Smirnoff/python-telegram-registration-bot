@@ -6,7 +6,6 @@ from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 
 from crud_users import CRUDUser, crud_user
-from model import User
 from password_service import generate_hashed_password
 from token_service import decode_jwt_token
 from jwt.exceptions import ExpiredSignatureError
@@ -55,7 +54,7 @@ async def post_register_page(
             jwt_secret_key=JWT_SECRET_KEY
         )
 
-        user_id = payload["sub"]
+        user_id = int(payload["sub"])
 
         user_check_in_database = await crud_user_obj.find_user_by_telegram_user_id(telegram_user_id=user_id)
 
@@ -69,7 +68,7 @@ async def post_register_page(
         else:
             hashed_password = await generate_hashed_password(password=password)
             hashed_password_str = hashed_password.decode()
-            new_user = User(user_id=user_id, password=hashed_password_str)
+            new_user = await crud_user_obj.create_user(user_id=user_id, password=hashed_password_str)
 
             token = {"registration_token": registration_token}
 
