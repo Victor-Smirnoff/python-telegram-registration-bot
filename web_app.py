@@ -45,7 +45,7 @@ async def get_register_page(jwt_token: str, request: Request):
 async def post_register_page(
     request: Request,
     registration_token: str = Form(...),
-    password: str = Form(...),
+    password: str = Form(""),
     crud_user_obj: CRUDUser = Depends(crud_user)
 ):
     try:
@@ -64,6 +64,13 @@ async def post_register_page(
                 name="register_error.html",
                 context={"request": request, "error_message": error_message},
                 status_code=403
+            )
+        elif password is "":
+            error_message = f"Был введен пустой пароль"
+            return templates.TemplateResponse(
+                name="register_error.html",
+                context={"request": request, "error_message": error_message},
+                status_code=400
             )
         else:
             hashed_password = await generate_hashed_password(password=password)

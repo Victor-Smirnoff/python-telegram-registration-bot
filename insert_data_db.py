@@ -18,7 +18,7 @@ async def insert_users_for_test():
     users_list = [User(
         user_id=user_id,
         password=(await generate_hashed_password(str(user_id))).decode()
-    ) for user_id in range(524565213, 524565313)]
+    ) for user_id in range(555555221, 555555251)]
     async with session_factory() as session:
         session.add_all(users_list)
         await session.commit()
