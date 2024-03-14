@@ -65,7 +65,7 @@ async def post_register_page(
                 context={"request": request, "error_message": error_message},
                 status_code=403
             )
-        elif password is "":
+        elif type(password) is str and password == "":
             error_message = f"Был введен пустой пароль"
             return templates.TemplateResponse(
                 name="register_error.html",
