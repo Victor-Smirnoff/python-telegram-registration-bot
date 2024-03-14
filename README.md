@@ -4,6 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-333?style=for-the-badge&logo=python&logoColor=yellow)
 ![Aiogram](https://img.shields.io/badge/aiogram-333?style=for-the-badge&logo=aiogram&logoColor=#009688)
 ![jwt](https://img.shields.io/badge/jwt-333?style=for-the-badge&logo=jwt&logoColor=#009688)
+![bcrypt](https://img.shields.io/badge/bcrypt-333?style=for-the-badge&logo=bcrypt&logoColor=#009688)
 ![FastAPI](https://img.shields.io/badge/FastAPI-333?style=for-the-badge&logo=FastAPI&logoColor=#009688)
 ![Asyncio](https://img.shields.io/badge/Asyncio-333?style=for-the-badge&logo=Asyncio)
 ![Uvicorn](https://img.shields.io/badge/Uvicorn-333?style=for-the-badge&logo=Uvicorn)
