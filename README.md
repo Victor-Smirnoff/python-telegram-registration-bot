@@ -59,5 +59,31 @@ URL_ADDRES_TO_REGISTER - url адрес, на который требуется 
 
 Нажать на кнопку /start для получения ссылки для регистрации
 
+## Preview
+
+#### Телеграм бот генерирует ссылки
+
+![Телеграм бот генерирует ссылки](static/telegram_bot_demo.png)
+
+#### Страница регистрации
+
+![Страница регистрации](static/telegram_bot_demo_register_page.png)
+
+#### Страница регистрации если регистрация прошла успешно
+
+![Страница регистрации](static/telegram_bot_demo_register_page_success.png)
+
+#### Страница регистрации если токен истек
+
+![Страница регистрации](static/telegram_bot_demo_register_page_error_expired.png)
+
+#### Страница регистрации если пользовател ввел пустой пароль
+
+![Страница регистрации](static/telegram_bot_demo_register_page_error_empty_pass.png)
+
+#### Страница регистрации если пользовател уже был зарегистрирован
+
+![Страница регистрации](static/telegram_bot_demo_register_page_error_exist_user.png)
+
 ## License
 Project Weather is licensed under the MIT license. (http://opensource.org/licenses/MIT)
