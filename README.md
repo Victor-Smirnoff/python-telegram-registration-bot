@@ -54,7 +54,7 @@ URL_ADDRES_TO_REGISTER - url адрес, на который требуется 
 
 Запустить файл bot_run.bat
 
-Зайти в телеграм бот по ссылке:
+Для теста у меня создан телеграм бот по ссылке:
 [Register_user_test_bot](https://t.me/Register_user_test_bot)
 
 Нажать на кнопку /start для получения ссылки для регистрации
