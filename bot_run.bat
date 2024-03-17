@@ -1,5 +1,7 @@
 @echo off
 
+chcp 65001
+
 echo activate virtual environment venv
 
 call %~dp0venv\Scripts\activate
