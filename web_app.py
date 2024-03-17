@@ -6,6 +6,8 @@ from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 
 from crud_users import CRUDUser, crud_user
+from error_response_dto import ErrorResponseDTO
+from model import User
 from password_service import generate_hashed_password
 from token_service import decode_jwt_token
 from jwt.exceptions import ExpiredSignatureError
@@ -32,12 +34,20 @@ async def get_register_page(jwt_token: str, request: Request):
             context={"request": request, "payload": payload, "jwt_token": jwt_token},
             status_code=200
         )
-    except ExpiredSignatureError:
-        error_message = f"Срок действия токена “{jwt_token}” истек"
+    except ExpiredSignatureError as e:
+        error_response = ErrorResponseDTO(
+            status_code=403,
+            detail=f"Срок действия токена “{jwt_token}” истек",
+            error_name=str(e)
+        )
+
+        error_message = error_response.detail
+        status_code = error_response.status_code
+
         return templates.TemplateResponse(
             name="register_error.html",
             context={"request": request, "error_message": error_message},
-            status_code=403
+            status_code=status_code
         )
 
 
@@ -48,6 +58,19 @@ async def post_register_page(
     password: str = Form(""),
     crud_user_obj: CRUDUser = Depends(crud_user)
 ):
+    if type(password) is str and password == "":
+        error_response = ErrorResponseDTO(
+            status_code=400,
+            detail=f"Был введен пустой пароль"
+        )
+        error_message = error_response.detail
+        status_code = error_response.status_code
+        return templates.TemplateResponse(
+            name="register_error.html",
+            context={"request": request, "error_message": error_message},
+            status_code=status_code
+        )
+
     try:
         payload = await decode_jwt_token(
             jwt_token=registration_token,
@@ -56,41 +79,41 @@ async def post_register_page(
 
         user_id = int(payload["sub"])
 
-        user_check_in_database = await crud_user_obj.find_user_by_telegram_user_id(telegram_user_id=user_id)
+        hashed_password = await generate_hashed_password(password=password)
+        hashed_password_str = hashed_password.decode()
+        new_user = await crud_user_obj.create_user(user_id=user_id, password=hashed_password_str)
 
-        if user_check_in_database is not None:
-            error_message = f"Пользователь с айди “{user_id}” уже был зарегистрирован"
-            return templates.TemplateResponse(
-                name="register_error.html",
-                context={"request": request, "error_message": error_message},
-                status_code=403
-            )
-        elif type(password) is str and password == "":
-            error_message = f"Был введен пустой пароль"
-            return templates.TemplateResponse(
-                name="register_error.html",
-                context={"request": request, "error_message": error_message},
-                status_code=400
-            )
-        else:
-            hashed_password = await generate_hashed_password(password=password)
-            hashed_password_str = hashed_password.decode()
-            new_user = await crud_user_obj.create_user(user_id=user_id, password=hashed_password_str)
-
+        if isinstance(new_user, User):
             token = {"registration_token": registration_token}
-
             return templates.TemplateResponse(
                 name="register_done.html",
                 context={"request": request, "token": token, "new_user": new_user},
                 status_code=201
             )
+        elif isinstance(new_user, ErrorResponseDTO):
+            error_response = new_user
+            error_message = error_response.detail
+            status_code = error_response.status_code
+            return templates.TemplateResponse(
+                name="register_error.html",
+                context={"request": request, "error_message": error_message},
+                status_code=status_code
+            )
 
-    except ExpiredSignatureError:
-        error_message = f"Срок действия токена “{registration_token}” истек"
+    except ExpiredSignatureError as e:
+        error_response = ErrorResponseDTO(
+            status_code=403,
+            detail=f"Срок действия токена “{registration_token}” истек",
+            error_name=str(e)
+        )
+
+        error_message = error_response.detail
+        status_code = error_response.status_code
+
         return templates.TemplateResponse(
             name="register_error.html",
             context={"request": request, "error_message": error_message},
-            status_code=403
+            status_code=status_code
         )
 
 
