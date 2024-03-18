@@ -29,13 +29,14 @@ async def generate_jwt_registration_token(
 async def decode_jwt_token(
         jwt_token: str,
         jwt_secret_key: str
-):
+) -> dict | None:
     """
     Функция декодирует данные из jwt токена и возвращает словарь payload с данными user_id и времени жизни токена
     :param jwt_token: jwt токен для регистрации
     :param jwt_secret_key: секретный ключик из файла .ENV
-    :return: словарь payload с данными user_id - айди пользователя telegram
+    :return: словарь payload с данными sub - айди пользователя telegram
     и exp - целое число в формате UNIX, до которого можно считать токен рабочим
+    Если срок жизни токена истек, то будет возбуждено исключение ExpiredSignatureError и возвращен None
     """
     payload = jwt.decode(
         jwt=jwt_token,
